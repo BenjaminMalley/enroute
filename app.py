@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, url_for, redirect, request, flash, make_response
-import config
+#import config
 import oauth2 as oauth
 import redis
 import urlparse
@@ -8,8 +8,8 @@ import redis
 import json
 
 app = Flask(__name__)
-app.secret_key = config.consumer_key
-app.consumer = oauth.Consumer(key=config.consumer_key, secret=config.consumer_secret)
+#app.secret_key = config.consumer_key
+#app.consumer = oauth.Consumer(key=config.consumer_key, secret=config.consumer_secret)
 app.cache = redis.StrictRedis(
 	host='localhost',
 	port=6379,
@@ -27,6 +27,10 @@ def verify_response(resp):
 
 
 @app.route('/', methods=['GET',])
+def idx():
+	return render_template('index.html')
+
+@app.route('/up', methods=['GET',])
 def index():
 	if 'request_token' in session:
 		auth_token = oauth.Token(session['request_token']['oauth_token'],
