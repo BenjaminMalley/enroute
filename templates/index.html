@@ -1,10 +1,12 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="hero-unit">
-			<div style="float: left;">
-				<h1 class="bottom-padding white"><i>On your way?</i></h1>
+{% block body %}
+<div class="container">
+	<div class="hero-unit">
+		<div style="float: left;">
+			<h1 class="bottom-padding blue"><i>On your way?</i></h1>
 				<div class="top-pad" style="width: 300px">
-					<p><strong><em>En route</em></strong> makes it easy to share your location and destination with friends and family.</p>
+					<p><strong><em>En route</em></strong> makes it easy to share your location 
+					and destination with friends and family.</p>
 				</div>
 				<div class="top-pad">
 					<button type="submit" class="btn btn-large large">Sign up with Twitter</button>
@@ -13,22 +15,36 @@
 			<div style="float: right;"><img src="static/img/iphone.png" /></div>
 			<div style="clear: both;"></div>
 		</div>
-		<!--<div class="row-fluid" style="padding-bottom: 10px;">
-			<div class="span8">
-				<i><h1 class="blue">How it works</i></h1>
-			</div>
-		</div>-->
-		<div class="row-fluid">
-			<div class="span3 blue"><h1><i>How it works</i></h1></div>
-			<div class="span3" style="font-size: 16px;"><i class="icon-search icn-leader blue"></i> Once you're signed in with Twitter, begin a new trip by specifying a destination in the destination bar.</div>
-			<div class="span3" style="font-size: 16px;"><i class="icon-twitter icn-leader blue"></i> <strong><em>En route</em></strong> sends out a tweet from your account containing a URL for your followers to track your progress towards the destination.</div>
-			<div class="span3" style="font-size: 16px;"><i class="icon-road icn-leader blue"></i> When you get to your destination, <strong><em>En route</em></strong> sends out another tweet letting your followers know you've arrived and stops tracking your location.</div>
-		</div>
+	</div>
+</div>
 
-		<footer>
-			<hr>
-			Goodbye.
-		</footer>
+<div class="fold top-pad"> 
+	<div class="container">
+		<div class="row" style="padding-top: 30px; padding-bottom: 20px;">
+			<div class="span3"><h1><i>How it works</i></h1></div>
+			<div class="span3" style="font-size: 16px;">
+				<i class="icon-search icn-leader yellow out"></i>
+				 Once you're signed in with Twitter, 
+				 begin a new trip by specifying a destination in the destination bar.
+			</div>
+			<div class="span3" style="font-size: 16px;">
+				<i class="icon-twitter icn-leader yellow out"></i>
+				 <strong><em>En route</em></strong> sends out a tweet from your account 
+				 containing a URL for your followers to track your progress towards the destination.
+			</div>
+			<div class="span3" style="font-size: 16px;">
+				<i class="icon-road icn-leader yellow out"></i>
+				 When you get to your destination, <strong><em>En route</em></strong> 
+				 sends out another tweet so your followers know you've arrived 
+				 and stops tracking your location.
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer>
+	Goodbye.
+</footer>
 
 {% endblock %}
 
