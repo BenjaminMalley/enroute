@@ -195,8 +195,17 @@ textarea {
 .blue {
 	color: #219ac6;
 }
+.yellow {
+	color: #FFF66C;
+}
 .white {
 	color: #FFFFF5;
+}
+.purple {
+	color: #C487FF;
+}
+.out {
+	text-shadow: 0px 1px 0px black;
 }
 .brand {
 	font-family: "atrament-web";
