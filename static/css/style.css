@@ -19,12 +19,13 @@ body {
   background-repeat: repeat;
   background-position: 0px 0px;
 }
-.img-rep {
+.fold {
   background-image: url("/static/img/bg.png");
   background-repeat: repeat;
   background-position: 0px 0px;
   height: 1000px; /* TODO */
-  background-color: #444;
+  background-color: #242424;
+  border-top: 1px solid rgba(0, 0, 0, .07);
 }
 a {
   /*color: #0088cc;*/
