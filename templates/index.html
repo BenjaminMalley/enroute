@@ -1,27 +1,25 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="container">
-	<div class="hero-unit">
-		<div style="float: left;">
-			<h1 class="bottom-padding blue"><i>On your way?</i></h1>
-				<div class="top-pad" style="width: 300px">
-					<p><strong><em>En route</em></strong> makes it easy to share your location 
+<div class="top-fold light-strip">
+	<div class="container">
+		<div class="row-fluid">
+			<div class="span6">
+				<h1 class="blue tag-line"><i>On your way?</i></h1>
+					<p class="sub-line"><strong><em>En route</em></strong> makes it easy to share your location 
 					and destination with friends and family.</p>
-				</div>
-				<div class="top-pad">
-					<button type="submit" class="btn btn-large large">Sign up with Twitter</button>
+				<div class="sub-line">
+					<button type="submit" class="btn btn-large large">Sign in with Twitter</button>
 				</div>
 			</div>
-			<div style="float: right;"><img src="static/img/iphone.png" /></div>
-			<div style="clear: both;"></div>
+			<div class="span6"><img src="static/img/iphone.png" /></div>
 		</div>
 	</div>
 </div>
 
-<div class="fold top-pad"> 
+<div class="top-pad dark-strip"> 
 	<div class="container">
-		<div class="row" style="padding-top: 30px; padding-bottom: 20px;">
-			<div class="span3"><h1><i>How it works</i></h1></div>
+		<div class="row-fluid" style="padding-bottom: 20px;">
+			<div class="span3"><h1 style="text-shadow: 0px 1px 0px black;"><i>How it works</i></h1></div>
 			<div class="span3" style="font-size: 16px;">
 				<i class="icon-search icn-leader yellow out"></i>
 				 Once you're signed in with Twitter, 
@@ -42,9 +40,15 @@
 	</div>
 </div>
 
-<footer>
-	Goodbye.
-</footer>
+<div>
+	<div class="container">
+		<footer>
+			<hr style="border: 0px; border-top: 1px solid #555;">Copyright 2012 Benjamin Malley
+		</footer>
+	</div>
+</div>
+
+
 
 {% endblock %}
 
