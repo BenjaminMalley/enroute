@@ -12,11 +12,18 @@ body {
   /*font-family: "nimbus-sans", Helvetica, Arial, sans-serif;*/
   font-size: 13px;
   line-height: 18px;
-  color: #333333;
-  background-color: #FFFFF0;
+  color: #FFFFF0;
+  /*color: #333333;*/
+  background-color: #333;
   background-image: url("/static/img/bg.png");
   background-repeat: repeat;
   background-position: 0px 0px;
+}
+.img-rep {
+  background-image: url("/static/img/bg.png");
+  background-repeat: repeat;
+  background-position: 0px 0px;
+
 }
 a {
   /*color: #0088cc;*/
@@ -48,7 +55,8 @@ textarea {
   vertical-align: middle;
   cursor: pointer;
   /*background-color: #f5f5f5;*/
-  background-color: #712514;
+  /*background-color: #712514;*/
+  background-color: #219ac6;
   /*border-bottom-color: #219AC6;*/
   /*background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
   background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
@@ -86,6 +94,7 @@ textarea {
   *background-color: #d9d9d9;*/
   /* Buttons in IE7 don't get borders, so darken on hover */
   border-color: #219AC6;
+  background-color: #219ac6;
 
   background-position: 0 -15px;
   -webkit-transition: background-position 0.1s linear;
@@ -111,6 +120,11 @@ textarea {
   /*-webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;*/
+  background-color: #219ac6;
+  background-image: none;
+  font-family: "nimbus-sans", Helvetica, Arial, sans-serif;
+  text-shadow: none;
+
 }
 .navbar-search .search-query {
   padding: 4px 9px;
@@ -132,20 +146,22 @@ textarea {
 }
 .hero-unit {
   padding: 60px;
+  padding-left: 0px;
   margin-bottom: 30px;
-  background-color: #E34A28;
+  /*background-color: #E34A28;
   border-bottom: 1px solid #219AC6;
-  /*background-color: #eeeeee;*/
+  background-color: #eeeeee;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
-  border-radius: 6px;
+  border-radius: 6px;*/
+  background-color: transparent;
 }
 .hero-unit h1 {
   margin-bottom: 0;
   font-size: 60px;
   line-height: 1;
   /*color: inherit;*/
-  color: #FFFFF5;
+  color: #219ac6;
   letter-spacing: -1px;
 }
 .hero-unit p {
@@ -177,7 +193,7 @@ textarea {
 	color: #93A5BC;
 }
 .blue {
-	color: #219AC6;
+	color: #219ac6;
 }
 .white {
 	color: #FFFFF5;
