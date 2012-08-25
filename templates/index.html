@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="top-fold light-strip">
-	<div class="container">
-		<div class="row-fluid">
+	<div class="container phone-pad">
+		<div class="row">
 			<div class="span6">
 				<h1 class="blue tag-line">On your way?</h1>
-					<p class="sub-line"><strong><em>En route</em></strong> makes it easy to share your location 
+				<p class="sub-line" style="padding-top: 70px;"><strong><em>En route</em></strong> makes it easy to share your location 
 					and destination with friends and family.</p>
-				<div class="sub-line">
+				<div class="sub-line" style="padding-top: 60px; padding-bottom: 50px;">
 					<button type="submit" class="btn btn-large large">Sign in with Twitter</button>
 				</div>
 			</div>
-			<div class="span6"><img src="static/img/iphone.png" /></div>
+			<div class="span6"><img src="static/img/iphone.png" class="hidden-phone" /></div>
 		</div>
 	</div>
 </div>
@@ -22,17 +22,17 @@
 			<div class="span3"><!--<h1 style="text-shadow: 0px 1px 0px black;"><i>How it works</i></h1>-->
 				<h1 class="icn-leader" style="font-size: 46px; font-family: 'atrament-web';"><i>How it works</i></h1>
 			</div>
-			<div class="span3" style="font-size: 16px;">
+			<div class="span3 phone-t" style="font-size: 16px;">
 				<i class="icon-search icn-leader out"></i>
 				 Once you're signed in with Twitter, 
 				 begin a new trip by specifying a destination in the destination bar.
 			</div>
-			<div class="span3" style="font-size: 16px;">
+			<div class="span3 phone-t" style="font-size: 16px;">
 				<i class="icon-twitter icn-leader out"></i>
 				 <strong><em>En route</em></strong> sends out a tweet from your account 
 				 containing a URL for your followers to track your progress towards the destination.
 			</div>
-			<div class="span3" style="font-size: 16px;">
+			<div class="span3 phone-t" style="font-size: 16px;">
 				<i class="icon-road icn-leader out"></i>
 				 When you get to your destination, <strong><em>En route</em></strong> 
 				 sends out another tweet so your followers know you've arrived 
