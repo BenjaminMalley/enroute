@@ -25,6 +25,10 @@ def verify_response(resp):
 
 @app.route('/', methods=['GET',])
 def index():
+	return render_template('index.html')
+
+@app.route('/cb/', methods=['GET',])
+def oauth_callback():
 	if 'request_token' in session:
 		auth_token = oauth.Token(session['request_token']['oauth_token'],
 			session['request_token']['oauth_token_secret'])
@@ -35,9 +39,8 @@ def index():
 		session['access_token'] = dict(urlparse.parse_qsl(content))
 		session.pop('request_token', None)
 		return render_template('route.html', maps_api_key=config.maps_api_key)
-
 	else:
-		return render_template('index.html')
+		return "No active session"
 
 @app.route('/authorize/')
 def authorize():
@@ -45,8 +48,8 @@ def authorize():
 	Redirects back to /'''
 
 	client = oauth.Client(app.consumer)
-	resp, content = client.request(config.auth_url+'request_token', 'POST',
-							body=urlencode({'oauth_callback': config.site_url+url_for('index')}))
+	resp, content = client.request(config.auth_url+'"request_token", "GET",
+							body=urlencode({"oauth_callback": config.site_url+url_for('oauth_callback')}))
 	verify_response(resp)
 	session['request_token'] = dict(urlparse.parse_qsl(content))
 	if app.debug:
