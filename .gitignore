@@ -31,3 +31,6 @@ lib
 include
 local
 Scripts
+
+#config
+config.py
