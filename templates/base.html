@@ -24,8 +24,11 @@
 
 	<script type="text/javascript" src="//use.typekit.net/pnq5ybb.js"></script>
 	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-
-    <link rel="shortcut icon" href="ico/favicon.ico">
+	<!--jQuery loaded in head to avoid dependency issue in route.js
+	TODO: fix-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    
+	<link rel="shortcut icon" href="ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
@@ -33,6 +36,7 @@
 {% block head %}{% endblock %}
 </head>
 <body>
+	<div class="wrapper">
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -65,9 +69,9 @@
 			</div>
 		{% endif %}
 	{% endwith %}
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+	</div>
+	{% block post %}{% endblock %}
     <script src="static/js/bootstrap.js"></script>
-
 
 </body>
 </html>

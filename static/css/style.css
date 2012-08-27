@@ -291,5 +291,6 @@ svg {
 	display: none;
 }
 #map-canvas {
-	height: 90%;
+	height: 500px;
 }
+
