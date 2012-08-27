@@ -34,9 +34,9 @@ html, body {
 {% endblock %}
 {% block post %}
 <div class="center">
-	<form class="form-search">
-		<input class="input-large search-query dest-bar" placeholder="Where are you headed?">
-	</form>
+	<!--<form class="form-search">-->
+		<input name="destination-bar" id="destination-bar" class="input-large search-query dest-bar" placeholder="Where are you headed?">
+	<!--</form>-->
 </div>
 <script type='text/javascript' src='https://maps.googleapis.com/maps/api/js?key={{ maps_api_key }}&sensor=false'></script>
 <script type='text/javascript' src="static/js/route.js"></script>

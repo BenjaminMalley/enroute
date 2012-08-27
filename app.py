@@ -15,8 +15,6 @@ app.cache = redis.StrictRedis(
 	port=6379,
 	db=0)
 
-site_url = 'http://127.0.0.1:5000/'
-
 def verify_response(resp):
 	if resp['status'] != '200':
 		session.pop('request_token', None)
@@ -24,11 +22,6 @@ def verify_response(resp):
 		return redirect(url_for('index'))
 	else:
 		return None
-
-
-#@app.route('/', methods=['GET',])
-#def idx():
-	#return render_template('index.html')
 
 @app.route('/', methods=['GET',])
 def index():
@@ -53,9 +46,15 @@ def authorize():
 
 	client = oauth.Client(app.consumer)
 	resp, content = client.request(config.auth_url+'request_token', 'POST',
-							body=urlencode({'oauth_callback': site_url+url_for('index')}))
+							body=urlencode({'oauth_callback': config.site_url+url_for('index')}))
 	verify_response(resp)
 	session['request_token'] = dict(urlparse.parse_qsl(content))
+	if app.debug:
+		with open(config.log, 'a') as log:
+			log.write("\n".join(["",
+				"/authorize/",
+				"request_token: {0}".format(session['request_token']['oauth_token']),
+				"response: {0}".format(str(resp))]))
 	return redirect('{0}?oauth_token={1}'.format(config.auth_url+'authorize',
 							session['request_token']['oauth_token']))
 
@@ -69,25 +68,29 @@ def route():
 		# not authorized
 		return make_response('You must have a valid session to complete this request.', 401)
 	
-	if not app.cache.exists(':'.join([user,'dur'])):	
+	#if not app.cache.exists(':'.join([user,'dur'])):	
 		
 		# this is the first server push, generate a tweet
-		client = oauth.Client(app.consumer,
-			oauth.Token(key=session['access_token']['oauth_token'],
-			secret=session['access_token']['oauth_token_secret']))
-		resp, content = client.request(config.tweet_url, 'POST', body=urlencode({
-			'status': "I started a trip! Track my progress at {0}track/{1}".format(
-			site_url, user),
-		}))
-		verify_response(resp)
+	client = oauth.Client(app.consumer,
+		oauth.Token(key=session['access_token']['oauth_token'],
+		secret=session['access_token']['oauth_token_secret']))
+	resp, content = client.request(config.tweet_url, 'POST', body=urlencode({
+		'status': "I started a trip! Track my progress at {0}track/{1}".format(
+		config.site_url, user),
+	}))
+	if app.debug:
+		with open(config.log, 'a') as log:
+			log.write("\n".join(["", "/route/", "access_token: {0}".format(session['access_token']['oauth_token'])]))
+	verify_response(resp)
 
-
+	"""
 	with app.cache.pipeline() as pipe:
 		for key in ('lat', 'lng', 'dest', 'dur'):
 			pipe.set(':'.join([user,key]), request.form[key])
 			# set to expire ten minutes after arrival
 			pipe.expire(':'.join([user,key]), int(request.form['dur'])+600)
 		pipe.execute()
+	"""
 	return 'OK'
 
 @app.route('/track/<user>/')
