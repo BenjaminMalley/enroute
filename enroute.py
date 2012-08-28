@@ -14,11 +14,16 @@ app.cache = redis.StrictRedis(
 	host='localhost',
 	port=6379,
 	db=0)
+app.auth_url = config.auth_url
+app.site_url = config.site_url
+app.tweet_url = config.tweet_url
+app.client = oauth.Client(app.consumer)
 
 def verify_response(resp):
 	if resp['status'] != '200':
 		session.pop('request_token', None)
 		flash('Bad response from Twitter: {0}'.format(resp))
+		print "UH OH"
 		return redirect(url_for('index'))
 	else:
 		return None
@@ -27,29 +32,67 @@ def verify_response(resp):
 def index():
 	return render_template('index.html')
 
-@app.route('/cb/', methods=['GET',])
-def oauth_callback():
+@app.route('/signin/')
+def twitter_signin():
+	#Step 1:
+	resp, content = app.client.request(app.auth_url+"request_token", "POST",
+		body=urlencode({"oauth_callback": app.site_url+url_for("twitter_authenticated")}))
+	verify_response(resp)
+	
+	#Step 2:
+	session['request_token'] = dict(urlparse.parse_qsl(content))
+	
+	#Step 3:
+	return redirect("{0}?oauth_token={1}".format(app.auth_url+"authorize",
+							session["request_token"]["oauth_token"]))
+							
+@app.route('/authenticated/')
+def twitter_authenticated():
 	if 'request_token' in session:
-		auth_token = oauth.Token(session['request_token']['oauth_token'],
-			session['request_token']['oauth_token_secret'])
-
-		client = oauth.Client(app.consumer, auth_token)
-		resp, content = client.request(config.auth_url+'access_token', 'GET')
+		#Step 1:
+		client = oauth.Client(app.consumer, oauth.Token(session['request_token']['oauth_token'],
+			session['request_token']['oauth_token_secret']))
+			
+		#Step 2:
+		resp, content = client.request(app.auth_url+"access_token", "GET")
 		verify_response(resp)
-		session['access_token'] = dict(urlparse.parse_qsl(content))
-		session.pop('request_token', None)
+		session["access_token"] = dict(urlparse.parse_qsl(content))
 		return render_template('route.html', maps_api_key=config.maps_api_key)
 	else:
-		return "No active session"
+		return "You must have an active session"
 
+@app.route("/tweet/", methods=["GET", "POST"])
+def send_tweet():
+	if "access_token" in session:
+		client = oauth.Client(app.consumer,
+			oauth.Token(key=session['access_token']['oauth_token'],
+			secret=session['access_token']['oauth_token_secret']))
+		print session["access_token"]["screen_name"]
+		'''
+		resp, content = client.request(config.tweet_url, "POST", body=urlencode({
+			'status': "I started a trip! Track my progress at {0}track/{1}".format(
+			app.site_url, session["access_token"]["screen_name"])}))
+		verify_response(resp)
+		'''
+		resp, content = client.request("https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name=twitterapi&count=2", "GET")
+		print content
+		#resp, content = client.request("https://api.twitter.com/1/account/verify_credentials.json", "GET")
+		session.pop("access_token", None)
+		session.pop("request_token", None)
+		return ""
+	else:
+		return "You must have an active session"
+	
+
+
+'''	
 @app.route('/authorize/')
 def authorize():
-	'''Redirects user to Twitter OAuth authorization page.
-	Redirects back to /'''
+
 
 	client = oauth.Client(app.consumer)
-	resp, content = client.request(config.auth_url+'"request_token", "GET",
-							body=urlencode({"oauth_callback": config.site_url+url_for('oauth_callback')}))
+	resp, content = client.request(app.auth_url+"request_token", "POST",
+		body=urlencode({"oauth_callback": app.site_url+url_for('oauth_callback')}))
 	verify_response(resp)
 	session['request_token'] = dict(urlparse.parse_qsl(content))
 	if app.debug:
@@ -58,11 +101,27 @@ def authorize():
 				"/authorize/",
 				"request_token: {0}".format(session['request_token']['oauth_token']),
 				"response: {0}".format(str(resp))]))
-	return redirect('{0}?oauth_token={1}'.format(config.auth_url+'authorize',
+	return redirect('{0}?oauth_token={1}'.format(app.auth_url+'authorize',
 							session['request_token']['oauth_token']))
 
-	
 
+@app.route('/cb/', methods=['GET',])
+def oauth_callback():
+	if 'request_token' in session:
+		auth_token = oauth.Token(session['request_token']['oauth_token'],
+			session['request_token']['oauth_token_secret'])
+
+		client = oauth.Client(app.consumer, auth_token)
+		resp, content = client.request(app.auth_url+'access_token', 'GET')
+		verify_response(resp)
+		session['access_token'] = dict(urlparse.parse_qsl(content))
+		#session.pop('request_token', None)
+		return render_template('route.html', maps_api_key=config.maps_api_key)
+	else:
+		return "No active session"							
+'''
+	
+'''
 @app.route('/route/', methods=['POST',])
 def route():
 	try:
@@ -79,7 +138,7 @@ def route():
 		secret=session['access_token']['oauth_token_secret']))
 	resp, content = client.request(config.tweet_url, 'POST', body=urlencode({
 		'status': "I started a trip! Track my progress at {0}track/{1}".format(
-		config.site_url, user),
+		app.site_url, user),
 	}))
 	if app.debug:
 		with open(config.log, 'a') as log:
@@ -95,6 +154,7 @@ def route():
 		pipe.execute()
 	"""
 	return 'OK'
+'''
 
 @app.route('/track/<user>/')
 def track_user(user):
