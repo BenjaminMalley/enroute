@@ -68,14 +68,10 @@ def send_tweet():
 			oauth.Token(key=session['access_token']['oauth_token'],
 			secret=session['access_token']['oauth_token_secret']))
 		print session["access_token"]["screen_name"]
-		'''
-		resp, content = client.request(config.tweet_url, "POST", body=urlencode({
+		resp, content = client.request("https://api.twitter.com/1/statuses/update.json", "POST", body=urlencode({
 			'status': "I started a trip! Track my progress at {0}track/{1}".format(
 			app.site_url, session["access_token"]["screen_name"])}))
 		verify_response(resp)
-		'''
-		resp, content = client.request("https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name=twitterapi&count=2", "GET")
-		print content
 		#resp, content = client.request("https://api.twitter.com/1/account/verify_credentials.json", "GET")
 		session.pop("access_token", None)
 		session.pop("request_token", None)
