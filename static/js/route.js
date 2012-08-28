@@ -27,7 +27,7 @@ $(document).ready(function() {
 			travelMode: google.maps.TravelMode.DRIVING
 		}, function(result, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
-				$.post('/route/', { // update the server
+				$.post('/tweet/', { // update the server
 					lat: pos.lat(),
 					lng: pos.lng(),
 					dest: dest,
