@@ -131,11 +131,15 @@ textarea {
   /*-webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;*/
-  background-color: #219ac6;
+  /*background-color: #219ac6;*/
   background-image: none;
   font-family: "nimbus-sans", Helvetica, Arial, sans-serif;
   text-shadow: none;
 
+}
+.btn-disabled {
+	color: #888;
+	background-color: #DDD;
 }
 .navbar-search .search-query {
   padding: 4px 9px;
