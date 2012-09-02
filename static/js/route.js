@@ -5,6 +5,7 @@ $(document).ready(function() {
 	var destination;
 	var position;
 	var marker;
+	var route;
 
 	var flash_error = function(error) {
 		alert(error); //TODO: make nice div
@@ -24,6 +25,8 @@ $(document).ready(function() {
 			}, function(result, status) {
 				if (status == google.maps.DirectionsStatus.OK) {
 					directionsDisplay.setDirections(result);
+					route = result.routes[0].legs[0];
+					$('#begin-btn').removeClass('disabled');
 				} else {
 					flash_error('Bad response from Google');
 				}
@@ -32,12 +35,12 @@ $(document).ready(function() {
 	});
 
 	$('#begin-btn').on('click', function() {
-		if(!($(this).hasClass('btn-disabled'))) {
+		if(!($(this).hasClass('disabled'))) {
 			$.post('/tweet/', { 
 				lat: position.lat(),
 				lng: position.lng(),
 				dest: destination,
-				dur: result.routes[0].legs[0].duration.value
+				dur: route.duration.value
 			});
 		}
 	});
