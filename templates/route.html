@@ -1,41 +1,16 @@
 {% extends "base.html" %}
 {% block head %}
-<style type="text/css">
-@media (max-width: 480px) {
-	.center {
-		width: 90%;
-	}
-}
-* {
-	margin: 0;
-}
-html, body {
-	height: 95%;
-}
-.wrapper {
-	min-height: 90%;
-	height: auto !important;
-	height: 90%;
-	margin: 0 auto;
-}
-.center {
-	margin: auto;
-	width: 65%;
-}
-.dest-bar {
-	width: 100%;
-	font-size: 1.5em;
-	font-family: "nimbus-sans";
-	padding: 0px;
-}
-#begin-btn {
-	width: 100%;
-	margin-top: 10px;
-}
-</style>
+<link href="/static/css/route.css" rel="stylesheet">
 {% endblock %}
+
+{% block menu %}
+<li class="active"><a id="showmap" href="#">Map</a></li>
+<li><a id="showdir" href="#">Directions</a></li>
+{% endblock %}
+
 {% block body %}
-<div id='map-canvas' class='view'></div>
+<div id="map-canvas" class="view top-fold"></div>
+<div id="dirlist" class="hidden"><ul></ul></div>
 {% endblock %}
 {% block post %}
 <div class="center">

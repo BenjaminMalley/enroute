@@ -142,6 +142,7 @@ textarea {
 	background-color: #e6e6e6;
   	*background-color: #d9d9d9;
 }
+.btn.red
 .navbar-search .search-query {
   padding: 4px 9px;
   font-family: "nimbus-sans", Helvetica, Arial, sans-serif;
@@ -280,22 +281,10 @@ textarea {
 	padding-left: 5%;
 	padding-top: .2%;
 }
-.nav-item {
-	float: left;
-	width: 20%;
-	height: 90%;
-	cursor: pointer;
-}
 .nav-first {
 	padding-left: 3%;
 }
-svg {
-	padding-top: 2.2%;
-}
-#map-button {
-	display: none;
-}
 #map-canvas {
-	height: 500px;
+	height: 600px;
 }
 

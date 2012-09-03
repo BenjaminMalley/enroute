@@ -1,0 +1,40 @@
+@media (max-width: 480px) {
+	.center {
+		width: 90%;
+	}
+}
+* {
+	margin: 0;
+}
+html, body {
+	height: 95%;
+}
+.wrapper {
+	min-height: 90%;
+	height: auto !important;
+	height: 90%;
+	margin: 0 auto;
+}
+.center {
+	margin: auto;
+	width: 65%;
+}
+.dest-bar {
+	width: 100%;
+	font-size: 1.5em;
+	font-family: "nimbus-sans";
+	padding: 0px;
+	margin-top: 10px;
+}
+#begin-btn {
+	width: 100%;
+	margin-top: 10px;
+}
+.btn-red {
+  background-color: #FF2C21;
+}
+.btn-red:hover {
+  background-color: #FF2C21;
+}
+
+

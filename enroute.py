@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, url_for, redirect, request, flash, make_response
+from flask import Flask, render_template, session, url_for, redirect, request, flash
 import config
 import oauth2 as oauth
 import redis
@@ -6,14 +6,15 @@ import urlparse
 from urllib import urlencode
 import redis
 import json
+import random
 
 app = Flask(__name__)
 app.secret_key = config.consumer_key
 app.consumer = oauth.Consumer(key=config.consumer_key, secret=config.consumer_secret)
 app.cache = redis.StrictRedis(
-	host="localhost",
-	port=6379,
-	db=0)
+	host=config.redis_host,
+	port=config.redis_port,
+	db=config.redis_db)
 app.auth_url = config.auth_url
 app.site_url = config.site_url
 app.tweet_url = config.tweet_url
@@ -58,73 +59,76 @@ def twitter_authenticated():
 	else:
 		return "You must have an active session"
 
-@app.route("/tweet/", methods=["GET", "POST"])
-def send_tweet():
+def verify_session(view):
+	if "access_token" in session:
+		return view()
+	else:
+		return ("Forbidden", 403)
+
+@app.route("/begin/", methods=["POST",])
+def start_trip():
 	if "access_token" in session:
 		client = oauth.Client(app.consumer,
 			oauth.Token(key=session["access_token"]["oauth_token"],
 			secret=session["access_token"]["oauth_token_secret"]))
+
+		url = str(random.randint(0,1000))
+		d = dict([(k, request.form[k]) for k in ('lat', 'lng', 'dest', 'dur')])
+		d["url"] = url
+		with app.cache.pipeline() as pipe:
+			pipe.set(url, session["access_token"]["screen_name"])
+			pipe.expire(session["access_token"]["screen_name"], int(request.form['dur'])+600)
+			pipe.hmset(session["access_token"]["screen_name"], d)
+			pipe.execute()
+		
+		'''
 		resp, content = client.request(config.tweet_url, "POST",
 			body=urlencode({"status":
 			"I started a trip! Track my progress at {0}track/{1}".format(
 			app.site_url, session["access_token"]["screen_name"])}))
 		verify_response(resp, content)
+		'''
 
-		session.pop("access_token", None)
-		session.pop("request_token", None)
-		return ""
+		return "OK"
+	else:
+		return ("Forbidden", 403)
+	
+@app.route("/update/", methods=["POST",])
+def update_location():
+	if "access_token" in session:
+		with app.cache.pipeline() as pipe:
+			pipe.hmset(session["access_token"]["screen_name"],
+				dict([(k, request.form[k]) for k in ('lat', 'lng', 'dest', 'dur')]))
+			pipe.expire(session["access_token"]["screen_name"], int(request.form['dur'])+600)
+			pipe.execute()
+		return "OK"
 	else:
 		return "You must have an active session"
-	
 
-
-'''
-@app.route('/route/', methods=['POST',])
-def route():
-	try:
-		user = session['access_token']['screen_name']
-	except KeyError:
-		# not authorized
-		return make_response('You must have a valid session to complete this request.', 401)
-	
-	#if not app.cache.exists(':'.join([user,'dur'])):	
-		
-		# this is the first server push, generate a tweet
-	client = oauth.Client(app.consumer,
-		oauth.Token(key=session['access_token']['oauth_token'],
-		secret=session['access_token']['oauth_token_secret']))
-	resp, content = client.request(config.tweet_url, 'POST', body=urlencode({
-		'status': "I started a trip! Track my progress at {0}track/{1}".format(
-		app.site_url, user),
-	}))
-	if app.debug:
-		with open(config.log, 'a') as log:
-			log.write("\n".join(["", "/route/", "access_token: {0}".format(session['access_token']['oauth_token'])]))
-	verify_response(resp)
-
-	"""
-	with app.cache.pipeline() as pipe:
-		for key in ('lat', 'lng', 'dest', 'dur'):
-			pipe.set(':'.join([user,key]), request.form[key])
-			# set to expire ten minutes after arrival
-			pipe.expire(':'.join([user,key]), int(request.form['dur'])+600)
-		pipe.execute()
-	"""
-	return 'OK'
-'''
+@app.route("/end/", methods=["POST",])
+def end_trip():
+	if "access_token" in session:
+		with app.cache.pipeline() as pipe:
+			k = pipe.hget(session["access_token"]["screen_name"], "url")
+			pipe.expire(session["access_token"]["screen_name"], 0)
+			pipe.expire(k, 0)
+			pipe.execute()
+		return "OK"
+	else:
+		return "You must have an active session"
 
 @app.route("/track/<user>/")
 def track_user(user):
-	if not app.cache.exists(":".join([user,"dur"])):
-		return make_response("nothing here", 404)
+	if not app.cache.exists(user):
+		return ("nothing here", 404)
 	return render_template("track.html", maps_api_key=config.maps_api_key, user=user)
 
 @app.route("/loc/<user>/")
 def get_location(user):
-	d = dict([(i,app.cache.get(":".join([user,i])))
-		for i in ("lat","lng","dest","dur")])
-	return json.dumps(d)
-
+	if not app.cache.exists(user):
+		return ("nothing here", 404)
+	else:
+		return json.dumps(app.cache.hgetall(user))
 
 if __name__ == "__main__":
-	app.run(debug=True)
+	app.run(debug=config.debug)

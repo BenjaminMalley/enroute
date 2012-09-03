@@ -26,23 +26,78 @@ $(document).ready(function() {
 				if (status == google.maps.DirectionsStatus.OK) {
 					directionsDisplay.setDirections(result);
 					route = result.routes[0].legs[0];
-					$('#begin-btn').removeClass('disabled');
+					$("#begin-btn").removeClass("disabled");
+					for (var i = 0; i < result.routes[0].legs[0].steps.length; i++) {
+						$("<li/>", {
+							html: result.routes[0].legs[0].steps[i].instructions
+						}).appendTo($("#dirlist").children().first());
+					}
 				} else {
-					flash_error('Bad response from Google');
+					flash_error("Bad response from Google");
 				}
 			});
 		}
 	});
 
-	$('#begin-btn').on('click', function() {
-		if(!($(this).hasClass('disabled'))) {
-			$.post('/tweet/', { 
-				lat: position.lat(),
-				lng: position.lng(),
-				dest: destination,
-				dur: route.duration.value
-			});
+
+	var update = function(p) {
+		position = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
+		marker.setPosition(position);
+		$.post("/update/", { 
+			lat: position.lat(),
+			lng: position.lng(),
+			dest: destination,
+			dur: route.duration.value
+		}, function(response) {
+			if (response === "OK") {
+			} else {
+				flash_error("Trouble communicating with server. Try again in a few minutes.");	
+			}
+		});	
+	};
+		
+	var begin = $("#begin-btn");
+	begin.on('click', function() {
+		if(!begin.hasClass('disabled')) {
+			if(!begin.hasClass("btn-red")) {
+				$.post("/begin/", { 
+					lat: position.lat(),
+					lng: position.lng(),
+					dest: destination,
+					dur: route.duration.value
+				}, function(response) {
+					if (response === "OK") {
+						begin.text("End trip");
+						begin.addClass("btn-red");
+					} else {
+						flash_error("Trouble communicating with server. Please try again in a few minutes.");			
+					}
+				});
+			} else {
+				$.post("/end/", {}, function(response) {
+					begin.text("I'm on my way!");
+					begin.removeClass("btn-red");
+					begin.addClass("disabled");
+				});
+			}
 		}
+	});
+
+	var showMap = $("#showmap");
+	var showDir = $("#showdir");
+	var mapCanvas = $("#map-canvas");
+	var dirList = $("#dirlist");
+	showMap.on("click", function() {
+		showMap.parent().addClass("active");
+		showDir.parent().removeClass("active");
+		dirList.addClass("hidden");
+		mapCanvas.removeClass("hidden");
+	});
+	showDir.on("click", function() {
+		showDir.parent().addClass("active");
+		showMap.parent().removeClass("active");
+		mapCanvas.addClass("hidden");
+		dirList.removeClass("hidden");
 	});
 
 	(function() { //init
@@ -67,8 +122,8 @@ $(document).ready(function() {
 			});
 
 			position_watcher = navigator.geolocation.watchPosition( function(p) {
-				position = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
-				marker.setPosition(position);
+				update(p);
+				//setInterval(update, 10000, p);
 			}, function(e) {
 				if (e.code == 1) {
 					flash_error('You must allow location sharing.');
@@ -80,8 +135,5 @@ $(document).ready(function() {
 			flash_error('Geolocation not supported by this browser');
 		}
 	})();
-
-	//get_route(new google.maps.LatLng(p.coords.latitude, p.coords.longitude), destination); 
-
 });
 
