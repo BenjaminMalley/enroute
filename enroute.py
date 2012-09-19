@@ -7,14 +7,12 @@ from urllib import urlencode
 import redis
 import json
 import random
+import os
 
 app = Flask(__name__)
 app.secret_key = config.consumer_key
 app.consumer = oauth.Consumer(key=config.consumer_key, secret=config.consumer_secret)
-app.cache = redis.StrictRedis(
-	host=config.redis_host,
-	port=config.redis_port,
-	db=config.redis_db)
+app.cache = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost'))
 app.auth_url = config.auth_url
 app.site_url = config.site_url
 app.tweet_url = config.tweet_url
@@ -81,13 +79,13 @@ def start_trip():
 			pipe.hmset(session["access_token"]["screen_name"], d)
 			pipe.execute()
 		
-		'''
+		
 		resp, content = client.request(config.tweet_url, "POST",
 			body=urlencode({"status":
 			"I started a trip! Track my progress at {0}track/{1}".format(
 			app.site_url, session["access_token"]["screen_name"])}))
 		verify_response(resp, content)
-		'''
+	
 
 		return "OK"
 	else:
@@ -131,4 +129,5 @@ def get_location(user):
 		return json.dumps(app.cache.hgetall(user))
 
 if __name__ == "__main__":
-	app.run(debug=config.debug)
+	port = int(os.environ.get("PORT", 5000))
+	app.run(host="0.0.0.0", port=port)
