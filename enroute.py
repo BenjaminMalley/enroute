@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, url_for, redirect, request, flash
-import config
+import heroku
 import oauth2 as oauth
 import redis
 import urlparse
@@ -10,17 +10,17 @@ import random
 import os
 
 app = Flask(__name__)
-app.secret_key = config.consumer_key
-app.consumer = oauth.Consumer(key=config.consumer_key, secret=config.consumer_secret)
+app.secret_key = heroku.consumer_key
+app.consumer = oauth.Consumer(key=heroku.consumer_key, secret=heroku.consumer_secret)
 app.cache = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost'))
-app.auth_url = config.auth_url
-app.site_url = config.site_url
-app.tweet_url = config.tweet_url
+app.auth_url = heroku.auth_url
+app.site_url = heroku.site_url
+app.tweet_url = heroku.tweet_url
 app.client = oauth.Client(app.consumer)
 
 def verify_response(resp, content):
 	if app.debug:
-		with open(config.log_file, "a") as log:
+		with open(heroku.log_file, "a") as log:
 			log.write(request.url+"\n")
 			log.write("".join(["twitter response: ", str(resp), "\n"]))
 			log.write("".join(["twitter content: ", content, "\n"]))
@@ -53,7 +53,7 @@ def twitter_authenticated():
 		resp, content = client.request(app.auth_url+"access_token", "GET")
 		verify_response(resp, content)
 		session["access_token"] = dict(urlparse.parse_qsl(content))
-		return render_template("route.html", maps_api_key=config.maps_api_key)
+		return render_template("route.html", maps_api_key=heroku.maps_api_key)
 	else:
 		return "You must have an active session"
 
@@ -80,7 +80,7 @@ def start_trip():
 			pipe.execute()
 		
 		
-		resp, content = client.request(config.tweet_url, "POST",
+		resp, content = client.request(heroku.tweet_url, "POST",
 			body=urlencode({"status":
 			"I started a trip! Track my progress at {0}track/{1}".format(
 			app.site_url, session["access_token"]["screen_name"])}))
@@ -119,7 +119,7 @@ def end_trip():
 def track_user(user):
 	if not app.cache.exists(user):
 		return ("nothing here", 404)
-	return render_template("track.html", maps_api_key=config.maps_api_key, user=user)
+	return render_template("track.html", maps_api_key=heroku.maps_api_key, user=user)
 
 @app.route("/loc/<user>/")
 def get_location(user):
