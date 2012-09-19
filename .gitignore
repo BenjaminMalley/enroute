@@ -34,3 +34,10 @@ Scripts
 
 #config
 config.py
+=======
+bin
+build
+include
+lib
+.Python
+*.pyc
