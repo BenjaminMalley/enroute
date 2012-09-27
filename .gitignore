@@ -34,6 +34,7 @@ Scripts
 
 #config
 config.py
+heroku.py
 =======
 bin
 build
